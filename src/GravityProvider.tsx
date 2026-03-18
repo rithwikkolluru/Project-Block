@@ -1,5 +1,5 @@
 import React, { useLayoutEffect } from 'react';
-import Lenis from '@studio-freight/lenis';
+import Lenis from 'lenis';
 
 export const GravityProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   useLayoutEffect(() => {
