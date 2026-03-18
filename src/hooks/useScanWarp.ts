@@ -13,7 +13,7 @@ export const useScanWarp = () => {
     // Simulate epic scan sequence
     setTimeout(() => {
       const score = Math.floor(Math.random() * 100);
-      const physics = getRiskPhysics(score);
+      getRiskPhysics(score);
       
       let level: 'safe' | 'warning' | 'danger' = 'safe';
       if (score >= 70) level = 'danger';

@@ -1,4 +1,3 @@
-import React from 'react';
 import { useCosmicStore } from '../stores/useCosmicStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowDownToLine } from 'lucide-react';

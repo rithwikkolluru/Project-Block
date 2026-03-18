@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
-import { useCosmicStore } from '../stores/useCosmicStore';
 import { useScanWarp } from '../hooks/useScanWarp';
 
 export const GravityHero = () => {

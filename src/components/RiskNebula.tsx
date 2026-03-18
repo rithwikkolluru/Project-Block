@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useCosmicStore } from '../stores/useCosmicStore';
-import { ShieldAlert, History, Code, Users } from 'lucide-react';
+import { History, Code, Users } from 'lucide-react';
 
 export const RiskNebula = () => {
   const { currentScan, isWarping } = useCosmicStore();

@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { useCosmicStore } from '../stores/useCosmicStore';
+
 
 export const MobilePhysics: React.FC = () => {
-  const { startScan } = useCosmicStore();
+  // Empty useCosmicStore call
 
   useEffect(() => {
     let touchStartX = 0;
