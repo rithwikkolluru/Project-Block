@@ -1,3 +1,5 @@
+Developed By: K.Rithvik Chowdary
+
 # CryptoShield - AI-Based Scam Detection for Crypto Transactions
 
 CryptoShield is a premium, high-performance web dashboard built to analyze and visualize blockchain transaction risk in real time. Leveraging an advanced AntGravity physics engine built with Framer Motion and Zustand, it provides users with an intuitive, dynamic interface to identify and report malicious activity on the blockchain, specifically tailored for the Algorand network.
@@ -67,3 +69,5 @@ Performance: Strict avoidance of layout thrashing and DOM-heavy redraws during p
 ## System Constraints and Environment Requirements
 
 This system is optimized for modern browsers supporting WebGL and advanced layout animations. When deploying to production environments, ensure you perform standard build processes using Vite before pushing to a CDN or edge network. Always consider implementing strict content security policies (CSP) when connecting to live wallet providers.
+
+                                     ##All rights reserved
