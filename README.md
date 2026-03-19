@@ -1,4 +1,4 @@
-Developed By: K.Rithvik Chowdary
+Developed By: K.Rithvik Chowdhary
 
 # CryptoShield - AI-Based Scam Detection for Crypto Transactions
 
