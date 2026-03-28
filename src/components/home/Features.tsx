@@ -1,4 +1,3 @@
-import React from 'react';
 import FeatureCard from '../ui/FeatureCard';
 import { Shield, Zap, Globe, Lock } from 'lucide-react';
 import { motion } from 'framer-motion';

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Mail, Lock, Wallet, ArrowRight } from 'lucide-react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useWallet } from '../../hooks/useWallet';
 
 const LoginPage: React.FC = () => {
@@ -9,10 +9,6 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const { loginEmail, connect } = useWallet();
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // If sent here by ProtectedRoute, go back to where the user wanted to go
-  const from = (location.state as { from?: Location })?.from?.pathname || '/';
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();

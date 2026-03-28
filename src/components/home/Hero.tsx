@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Zap, Info, ArrowRight, ShieldAlert, CheckCircle2, XCircle, AlertTriangle } from 'lucide-react';
 import { useScanWarp } from '../../hooks/useScanWarp';
