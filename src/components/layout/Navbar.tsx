@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useWallet } from '../../hooks/useWallet';
 import { Wallet, Shield, Menu, X } from 'lucide-react';
@@ -7,11 +8,7 @@ const Navbar = () => {
   const { address, isConnected, connect, disconnect } = useWallet();
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const navLinks = [
-    { name: 'Features', href: '#features' },
-    { name: 'How It Works', href: '#how-it-works' },
-    { name: 'Security', href: '#security' },
-  ];
+
 
   return (
     <motion.nav 
@@ -30,24 +27,33 @@ const Navbar = () => {
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a 
-              key={link.name} 
-              href={link.href}
-              className="text-sm font-medium text-slate-300 hover:text-white transition-colors"
-            >
-              {link.name}
-            </a>
-          ))}
+          <Link to="/" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Home</Link>
+          <Link to="/networkmap" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Network Map</Link>
+          <Link to="/registry" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Scam Registry</Link>
         </div>
 
-        {/* Wallet CTA */}
+        {/* Auth / Wallet CTA */}
         <div className="flex items-center gap-4">
+          {!isConnected ? (
+            <Link to="/login" className="hidden sm:block text-sm font-bold text-slate-400 hover:text-white transition-colors">
+              Sign In
+            </Link>
+          ) : (
+            <div className="flex items-center gap-4">
+               <Link to="/" className="hidden sm:block text-sm font-bold text-indigo-400 hover:text-indigo-300 transition-colors uppercase tracking-widest">
+                Dashboard
+              </Link>
+              <Link to="/logout" className="text-xs font-bold text-red-400/60 hover:text-red-400 transition-colors uppercase tracking-widest">
+                Logout
+              </Link>
+            </div>
+          )}
+          
           <button
             onClick={isConnected ? disconnect : connect}
-            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-full text-sm font-semibold transition-all hover:scale-105 active:scale-95"
+            className="flex items-center gap-2 bg-white/5 border border-white/10 hover:bg-white/10 text-white px-4 py-2 rounded-full text-sm font-semibold transition-all hover:scale-105 active:scale-95 group"
           >
-            <Wallet className="w-4 h-4" />
+            <Wallet className="w-4 h-4 text-indigo-400 group-hover:text-indigo-300" />
             {isConnected ? `${address?.slice(0, 6)}...${address?.slice(-4)}` : 'Connect Wallet'}
           </button>
           
@@ -57,16 +63,23 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu (Skeleton) */}
+      {/* Mobile Menu */}
       {isOpen && (
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="absolute top-20 left-6 right-6 glass-card rounded-2xl p-6 flex flex-col gap-4 md:hidden"
+          className="absolute top-20 left-6 right-6 glass-card rounded-2xl p-6 flex flex-col gap-4 md:hidden z-50"
         >
-          {navLinks.map((link) => (
-            <a key={link.name} href={link.href} className="text-lg font-medium">{link.name}</a>
-          ))}
+          <Link to="/" className="text-base font-bold text-white/80 hover:text-white" onClick={() => setIsOpen(false)}>Home</Link>
+          <Link to="/networkmap" className="text-base font-bold text-white/80 hover:text-white" onClick={() => setIsOpen(false)}>Network Map</Link>
+          <Link to="/registry" className="text-base font-bold text-white/80 hover:text-white" onClick={() => setIsOpen(false)}>Scam Registry</Link>
+          <div className="border-t border-white/10 pt-4 flex flex-col gap-3">
+            {isConnected ? (
+              <Link to="/logout" className="text-sm font-bold text-red-400 uppercase tracking-widest" onClick={() => setIsOpen(false)}>Logout</Link>
+            ) : (
+              <Link to="/login" className="text-sm font-bold text-indigo-400 uppercase tracking-widest" onClick={() => setIsOpen(false)}>Sign In</Link>
+            )}
+          </div>
         </motion.div>
       )}
     </motion.nav>

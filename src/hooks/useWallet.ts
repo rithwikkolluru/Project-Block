@@ -7,13 +7,14 @@ interface WalletState {
   isLoading: boolean;
   error: string | null;
   connect: () => Promise<void>;
+  loginEmail: (email: string) => void;
   disconnect: () => Promise<void>;
   reconnect: () => Promise<void>;
 }
 
 export const useWallet = create<WalletState>((set) => ({
-  address: localStorage.getItem('walletAddress'),
-  isConnected: !!localStorage.getItem('walletAddress'),
+  address: localStorage.getItem('walletAddress') || localStorage.getItem('userEmail'),
+  isConnected: !!(localStorage.getItem('walletAddress') || localStorage.getItem('userEmail')),
   isLoading: false,
   error: null,
 
@@ -29,12 +30,26 @@ export const useWallet = create<WalletState>((set) => ({
     }
   },
 
+  // Mock login for email/password
+  loginEmail: (email: string) => {
+    localStorage.setItem('userEmail', email);
+    set({ address: email, isConnected: true });
+  },
+
   disconnect: async () => {
     try {
-      await algorandService.disconnectWallet();
+      if (localStorage.getItem('walletAddress')) {
+        await algorandService.disconnectWallet();
+      }
+      localStorage.removeItem('walletAddress');
+      localStorage.removeItem('userEmail');
       set({ address: null, isConnected: false });
     } catch (err: any) {
       console.error('Disconnect error:', err);
+      // Still clear local state
+      localStorage.removeItem('walletAddress');
+      localStorage.removeItem('userEmail');
+      set({ address: null, isConnected: false });
     }
   },
 
