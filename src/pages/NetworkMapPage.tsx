@@ -86,10 +86,10 @@ export const NetworkMapPage = () => {
           Visualize on-chain Algorand transaction paths, smart contract calls, and discover connected malicious entities using our force-directed physics engine.
         </p>
         
-        <div className="flex flex-col sm:flex-row gap-4 w-full max-w-2xl">
+        <div className="glass-card p-2 flex flex-col sm:flex-row gap-4 w-full max-w-2xl rounded-2xl">
           <Input 
             size="large"
-            className="flex-1 bg-white/5 border-white/20 text-white hover:border-gravityAccent focus:border-gravityAccent placeholder:text-white/30 backdrop-blur-md"
+            className="flex-1 bg-white/5 border-white/10 text-white hover:border-indigo-500/50 focus:border-indigo-500 placeholder:text-white/30 backdrop-blur-md"
             placeholder="Search Wallet Address (e.g. ALGO...)"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
@@ -99,7 +99,7 @@ export const NetworkMapPage = () => {
           <Button 
             size="large"
             type="primary"
-            className="bg-gravityAccent border-none shadow-[0_0_20px_rgba(99,102,241,0.5)] font-bold hover:!bg-[#4F46E5]"
+            className="bg-indigo-600 border-none shadow-[0_0_20px_rgba(79,70,229,0.4)] font-bold hover:!bg-indigo-500 rounded-xl"
             onClick={handleSearch}
             loading={loading}
           >
@@ -147,7 +147,7 @@ export const NetworkMapPage = () => {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: '100%', opacity: 0 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="absolute top-32 right-0 bottom-0 w-full md:w-96 bg-black/80 backdrop-blur-3xl border-l border-white/10 shadow-2xl z-40 p-6 overflow-y-auto"
+            className="absolute top-32 right-6 bottom-6 w-full md:w-96 glass-card border-white/10 shadow-2xl z-40 p-6 overflow-y-auto rounded-[2rem]"
           >
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-white text-xl font-bold flex items-center gap-2">
@@ -163,26 +163,26 @@ export const NetworkMapPage = () => {
 
             <div className="space-y-6">
               {/* Wallet Info Card */}
-              <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-4 glass-card shadow-inner">
                 <div className="text-white/50 text-xs uppercase tracking-wider mb-1">Wallet Address</div>
                 <div className="text-white font-mono text-sm break-all flex items-center justify-between">
                   {selectedNode.id}
-                  <ExternalLink size={14} className="text-white/40 cursor-pointer hover:text-gravityAccent" />
+                  <ExternalLink size={14} className="text-white/40 cursor-pointer hover:text-indigo-400" />
                 </div>
               </div>
 
               {/* Risk Score */}
               <div className="flex gap-4">
-                <div className="flex-1 bg-white/5 border border-white/10 rounded-xl p-4 flex flex-col items-center justify-center">
+                <div className="flex-1 bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center glass-card">
                   <div className="text-white/50 text-xs uppercase tracking-wider mb-2">Risk Score</div>
                   <div className={`text-4xl font-bold ${
-                    selectedNode.isScam ? 'text-dangerCollapse drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]' : 
-                    selectedNode.risk > 0.5 ? 'text-warnWobble' : 'text-safeFloat'
+                    selectedNode.isScam ? 'text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]' : 
+                    selectedNode.risk > 0.5 ? 'text-amber-500' : 'text-emerald-500'
                   }`}>
                     {Math.round(selectedNode.risk * 100)}
                   </div>
                 </div>
-                <div className="flex-1 bg-white/5 border border-white/10 rounded-xl p-4 flex flex-col items-center justify-center">
+                <div className="flex-1 bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center glass-card">
                   <div className="text-white/50 text-xs uppercase tracking-wider mb-2">Tx Count</div>
                   <div className="text-2xl font-bold text-white">
                     {selectedNode.txCount}
@@ -228,7 +228,7 @@ export const NetworkMapPage = () => {
                 type="primary" 
                 block 
                 size="large"
-                className="mt-4 shadow-[0_0_15px_rgba(239,68,68,0.4)] border-none bg-dangerCollapse"
+                className="mt-4 shadow-[0_0_15px_rgba(239,68,68,0.4)] border-none bg-red-600 hover:bg-red-500 rounded-xl font-bold"
               >
                 Report as Scam
               </Button>

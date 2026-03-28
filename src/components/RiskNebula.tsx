@@ -9,9 +9,9 @@ export const RiskNebula = () => {
   if (!currentScan && !isWarping) return null;
 
   const colorMap = {
-    safe: '#10B981',
-    warning: '#F59E0B',
-    danger: '#EF4444'
+    safe: '#10B981', // Emerald-500
+    warning: '#F59E0B', // Amber-500
+    danger: '#EF4444' // Red-500
   };
 
   const orbColor = currentScan ? colorMap[currentScan.level] : '#6366F1';
@@ -21,15 +21,19 @@ export const RiskNebula = () => {
       
       {/* Central Black Hole / Sun */}
       <motion.div
-        animate={isWarping ? { scale: [1, 1.5, 0.8, 1.2], rotate: 360 } : { scale: 1, rotate: 0 }}
+        animate={isWarping ? { scale: [1, 1.2, 0.9, 1.1], rotate: 360 } : { scale: 1, rotate: 0 }}
         transition={{ duration: 4, repeat: isWarping ? Infinity : 0 }}
-        className="absolute w-40 h-40 md:w-64 md:h-64 rounded-full flex items-center justify-center shadow-[0_0_80px_currentColor] z-10"
-        style={{ color: orbColor, background: `radial-gradient(circle, ${orbColor} 0%, rgba(0,0,0,0) 70%)` }}
+        className="absolute w-48 h-48 md:w-72 md:h-72 rounded-full flex items-center justify-center shadow-[0_0_100px_currentColor] z-10 backdrop-blur-sm"
+        style={{ 
+          color: orbColor, 
+          background: `radial-gradient(circle, ${orbColor}33 0%, rgba(0,0,0,0) 75%)`,
+          border: `1px solid ${orbColor}22` 
+        }}
       >
         {!isWarping && currentScan && (
-          <div className="text-center font-bold text-white drop-shadow-md">
-            <div className="text-5xl">{currentScan.score}</div>
-            <div className="text-sm uppercase tracking-widest mt-2">{currentScan.level}</div>
+          <div className="text-center font-bold text-white drop-shadow-2xl">
+            <div className="text-6xl tracking-tight">{currentScan.score}</div>
+            <div className="text-xs uppercase tracking-[0.3em] mt-3 text-white/50">{currentScan.level} Score</div>
           </div>
         )}
       </motion.div>
@@ -80,7 +84,7 @@ export const RiskNebula = () => {
 const OrbitCard = ({ icon, label, delay, radius }: { icon: React.ReactNode, label: string, delay: number, radius: number }) => {
   return (
     <motion.div
-      className="absolute border border-white/10 bg-white/5 backdrop-blur-md p-4 rounded-xl flex items-center gap-3 shadow-xl hidden md:flex"
+      className="absolute glass-card backdrop-blur-2xl p-4 rounded-2xl flex items-center gap-4 shadow-2xl hidden md:flex border border-white/5 hover:border-indigo-500/20 transition-all cursor-default"
       initial={{ opacity: 0, x: 0, y: 0 }}
       animate={{ 
         opacity: 1, 
@@ -98,8 +102,8 @@ const OrbitCard = ({ icon, label, delay, radius }: { icon: React.ReactNode, labe
         marginLeft: `${radius * 2}px`
       }}
     >
-      <div className="text-gravityAccent">{icon}</div>
-      <div className="text-sm font-semibold truncate text-white">{label}</div>
+      <div className="text-indigo-400 p-2 bg-indigo-500/10 rounded-lg">{icon}</div>
+      <div className="text-sm font-bold truncate text-white uppercase tracking-wider">{label}</div>
     </motion.div>
   );
 };
