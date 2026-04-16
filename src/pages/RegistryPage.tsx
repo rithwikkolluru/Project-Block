@@ -1,33 +1,42 @@
-import { useState } from 'react';
-import { Table, Input, Button, Modal, Form, Select, message } from 'antd';
-import { Search, UserX, AlertTriangle, ExternalLink, FileText, Link } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Table, Input, Button, Modal, Form, Select, message, Spin } from 'antd';
+import { Search, UserX, AlertTriangle, ExternalLink, FileText, Link, Shield } from 'lucide-react';
+import { getScamRegistry, submitScamReport } from '../services/api/scanService';
+import { useWallet } from '../hooks/useWallet';
 
 const { Option } = Select;
 const { TextArea } = Input;
 
-interface ScamEntry {
-  address: string;
-  reportedBy: string;
-  reporterAddress: string;
-  risk: number;
-  createdAt: string;
-  status: 'pending' | 'confirmed' | 'rejected';
-}
-
-const mockRegistryData: ScamEntry[] = [
-  { address: 'ALGO1XF9...', reportedBy: 'AlgoSec', reporterAddress: 'ALGO9...', risk: 0.95, createdAt: '2025-03-10T14:00:00Z', status: 'confirmed' },
-  { address: 'ALGO2KL7...', reportedBy: 'User_442', reporterAddress: 'ALGO8...', risk: 0.88, createdAt: '2025-03-09T09:12:00Z', status: 'confirmed' },
-  { address: 'ALGO3ZZ1...', reportedBy: 'Anon', reporterAddress: 'ALGO7...', risk: 0.65, createdAt: '2025-03-11T16:45:00Z', status: 'pending' },
-  { address: 'ALGO4MP2...', reportedBy: 'CryptoCop', reporterAddress: 'ALGO6...', risk: 0.99, createdAt: '2025-03-08T11:20:00Z', status: 'confirmed' }
+const MOCK_REGISTRY = [
+  { address: 'ALGO1XF9AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', reportedBy: 'AlgoSec', reporterAddress: 'ALGO9...', risk: 0.95, createdAt: '2025-03-10T14:00:00Z', status: 'confirmed' },
+  { address: 'ALGO2KL7BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB', reportedBy: 'User_442', reporterAddress: 'ALGO8...', risk: 0.88, createdAt: '2025-03-09T09:12:00Z', status: 'confirmed' },
+  { address: 'ALGO3ZZ1CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC', reportedBy: 'Anon', reporterAddress: 'ALGO7...', risk: 0.65, createdAt: '2025-03-11T16:45:00Z', status: 'pending' },
+  { address: 'ALGO4MP2DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD', reportedBy: 'CryptoCop', reporterAddress: 'ALGO6...', risk: 0.99, createdAt: '2025-03-08T11:20:00Z', status: 'confirmed' },
 ];
 
 export const RegistryPage = () => {
-  const [data] = useState<ScamEntry[]>(mockRegistryData);
+  const { address: walletAddress } = useWallet();
+  const [data, setData] = useState<any[]>(MOCK_REGISTRY);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedEntry, setSelectedEntry] = useState<ScamEntry | null>(null);
+  const [selectedEntry, setSelectedEntry] = useState<any | null>(null);
   const [form] = Form.useForm();
+
+  // Fetch registry on mount
+  useEffect(() => {
+    setLoading(true);
+    getScamRegistry()
+      .then((entries) => {
+        if (entries && entries.length > 0) setData(entries);
+      })
+      .catch(() => {
+        // silently fall back to mock data already set
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   const handleSearch = (value: string) => {
     setSearch(value);
@@ -60,7 +69,7 @@ export const RegistryPage = () => {
       title: 'Risk Score',
       dataIndex: 'risk',
       key: 'risk',
-      sorter: (a: ScamEntry, b: ScamEntry) => a.risk - b.risk,
+      sorter: (a: any, b: any) => a.risk - b.risk,
       render: (risk: number) => {
         let colorClass = 'text-safeFloat bg-safeFloat/10 border-safeFloat/30';
         if (risk > 0.5) colorClass = 'text-warnWobble bg-warnWobble/10 border-warnWobble/30';
@@ -102,7 +111,7 @@ export const RegistryPage = () => {
     {
       title: 'Action',
       key: 'action',
-      render: (_: any, record: ScamEntry) => (
+      render: (_: any, record: any) => (
         <Button 
           type="link" 
           className="text-gravityAccent hover:text-white"
@@ -117,14 +126,34 @@ export const RegistryPage = () => {
     },
   ];
 
-  const onReportSubmit = (values: any) => {
-    console.log('Success:', values);
-    message.success({
-      content: 'Scam report submitted successfully',
-      className: 'bg-black/80 border border-white/20 rounded-xl text-white backdrop-blur-md',
-      style: { color: 'white' }
-    });
-    form.resetFields();
+  const onReportSubmit = async (values: any) => {
+    setSubmitting(true);
+    try {
+      const result = await submitScamReport({
+        address: values.address,
+        reason: values.reason,
+        evidence: values.evidence || '',
+        reporterAddress: walletAddress || undefined,
+      });
+      message.success({
+        content: `Report submitted! Stored on Algorand: ${result.txId?.slice(0, 16)}...`,
+        className: 'bg-black/80 border border-white/20 rounded-xl text-white backdrop-blur-md',
+        style: { color: 'white' },
+        duration: 5,
+      });
+      form.resetFields();
+      // Refresh registry list
+      const entries = await getScamRegistry().catch(() => null);
+      if (entries && entries.length > 0) setData(entries);
+    } catch (err: any) {
+      message.error({
+        content: err?.message || 'Failed to submit report',
+        className: 'bg-black/80 border border-white/20 rounded-xl text-white backdrop-blur-md',
+        style: { color: 'white' },
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -135,12 +164,19 @@ export const RegistryPage = () => {
             <UserX className="text-dangerCollapse drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]" size={32} /> 
             Scam Wallet Registry
           </h1>
-          <p className="text-white/60">Community-driven, transparent, secure.</p>
+          <p className="text-white/60">Community-driven, Algorand-backed, transparent.</p>
         </div>
 
         <div className="glass-card px-6 py-3 rounded-2xl flex items-center gap-3 border-indigo-500/20 shadow-[0_0_20px_rgba(99,102,241,0.1)]">
-          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
-          <span className="text-white/80 font-mono text-sm tracking-tight text-indigo-100">Live Registry: {data.length} Confirmed Scams</span>
+          {loading ? (
+            <Spin size="small" />
+          ) : (
+            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+          )}
+          <span className="text-white/80 font-mono text-sm tracking-tight text-indigo-100">
+            <Shield size={13} className="inline mr-1 text-indigo-400" />
+            Live Registry: {data.length} Entries
+          </span>
         </div>
       </div>
 
@@ -218,8 +254,14 @@ export const RegistryPage = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" size="large" className="bg-indigo-600 border-none hover:bg-indigo-500 font-bold px-10 rounded-xl shadow-[0_0_20px_rgba(79,70,229,0.3)]">
-              Submit Report
+            <Button
+              type="primary"
+              htmlType="submit"
+              size="large"
+              loading={submitting}
+              className="bg-indigo-600 border-none hover:bg-indigo-500 font-bold px-10 rounded-xl shadow-[0_0_20px_rgba(79,70,229,0.3)]"
+            >
+              {submitting ? 'Submitting to Algorand...' : 'Submit Report'}
             </Button>
           </Form.Item>
         </Form>

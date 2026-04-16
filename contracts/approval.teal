@@ -1,0 +1,109 @@
+#pragma version 8
+txn ApplicationID
+int 0
+==
+bnz main_l14
+txn OnCompletion
+int OptIn
+==
+bnz main_l13
+txn OnCompletion
+int DeleteApplication
+==
+bnz main_l12
+txn OnCompletion
+int UpdateApplication
+==
+bnz main_l11
+txna ApplicationArgs 0
+byte "submit"
+==
+bnz main_l10
+txna ApplicationArgs 0
+byte "verify"
+==
+bnz main_l9
+txna ApplicationArgs 0
+byte "get"
+==
+bnz main_l8
+err
+main_l8:
+int 1
+return
+main_l9:
+txn NumAppArgs
+int 2
+==
+assert
+txn Sender
+byte "ADMIN"
+app_global_get
+==
+assert
+txna ApplicationArgs 1
+byte "IS_VERIFIED"
+int 1
+app_local_put
+int 1
+return
+main_l10:
+txn NumAppArgs
+int 2
+==
+assert
+txna ApplicationArgs 1
+len
+int 10
+>
+assert
+txn Sender
+byte "REPORT_HASH"
+txna ApplicationArgs 1
+app_local_put
+txn Sender
+byte "IS_VERIFIED"
+int 0
+app_local_put
+txn Sender
+byte "TIME"
+global LatestTimestamp
+app_local_put
+byte "REPORT_COUNT"
+byte "REPORT_COUNT"
+app_global_get
+int 1
++
+app_global_put
+int 1
+return
+main_l11:
+int 0
+return
+main_l12:
+int 0
+return
+main_l13:
+txn Sender
+byte "REPORT_HASH"
+byte ""
+app_local_put
+txn Sender
+byte "IS_VERIFIED"
+int 0
+app_local_put
+txn Sender
+byte "TIME"
+int 0
+app_local_put
+int 1
+return
+main_l14:
+byte "REPORT_COUNT"
+int 0
+app_global_put
+byte "ADMIN"
+txn Sender
+app_global_put
+int 1
+return
